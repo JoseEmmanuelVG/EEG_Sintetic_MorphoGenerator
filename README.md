@@ -1,3 +1,4 @@
+
 # EEG_Sintetic_MorphoGenerator
 
 # Base de Datos de Señales EEG - DataBaseV1
@@ -27,6 +28,50 @@ Cada archivo en la base de datos sigue una nomenclatura específica que describe
 - `NW`: Noise Wave (Ruido de las Ondas).
 
 Esta nomenclatura permite una rápida identificación de las características principales de cada señal dentro de la base de datos.
+
+
+# Descargar Repositorio de GitHub en Formato ZIP
+
+Este documento proporciona una guía paso a paso para descargar un repositorio de GitHub en formato ZIP. También se incluye una explicación sobre cómo organizar los archivos una vez descargados.
+
+## Pasos para Descargar el Repositorio
+
+1. **Acceder al Repositorio**: 
+   - Navega hasta la página principal del repositorio en GitHub.
+
+2. **Descargar el Repositorio**:
+   - Haz clic en el botón **`Code`** ubicado en la parte superior derecha del listado de archivos.
+   - En el menú desplegable, selecciona **`Download ZIP`**.
+   - El archivo ZIP del repositorio se descargará automáticamente en tu computadora.
+
+![image](https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/ef25b438-9f3f-4824-bbc8-60b1a4a8838f)
+
+## Organizar los Archivos Descargados
+
+Una vez que hayas descargado y extraído los archivos del ZIP, es posible que quieras organizarlos. Aquí te explicamos cómo hacerlo en tu sistema operativo.
+
+1. **Abrir la Carpeta del Repositorio**:
+   - Dirígete a la carpeta donde has extraído los archivos.
+
+2. **Ordenar Archivos**:
+   - Haz clic derecho en un espacio vacío dentro de la carpeta.
+   - Selecciona **`Ordenar por`** y luego **`Tipo`**. Esto agrupará los archivos por su extensión, facilitando la búsqueda de tipos de archivos específicos.
+
+### Video Tutorial
+
+Para una mejor comprensión, aquí tienes un video tutorial que muestra el proceso: *(Inserta el enlace o incrusta el video aquí)*.
+
+
+https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/d1005862-8e35-4b98-8d2e-7b9ad2ec461d
+
+
+
+Si tienes alguna duda o necesitas asistencia adicional, no dudes en preguntar. 
+
+
+
+
+
 
 
 
