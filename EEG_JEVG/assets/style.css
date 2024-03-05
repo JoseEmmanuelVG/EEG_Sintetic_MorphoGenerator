@@ -1,0 +1,25 @@
+body {
+    background-color: #e6f7ff;
+}
+
+a {
+    display: inline-block;   /* Esto asegura que las propiedades de dimensiones y padding se apliquen correctamente */
+    color: black;
+    text-decoration: none;
+    padding: 10px 20px;      /* Aumenta el padding para dar más espacio */
+    border: 1px solid black;
+    margin: 10px;            /* Añade un margen alrededor del botón para separarlos */
+    border-radius: 5px;      /* Bordes redondeados para un mejor aspecto */
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+/* Contenedor de los botones */
+div.button-container {
+    display: flex;
+    flex-direction: column; /* Alinea los botones verticalmente */
+    gap: 20px;              /* Espacio entre los botones */
+    align-items: center;    /* Centra los botones horizontalmente */
+}
