@@ -1,83 +1,50 @@
+# Generador de EEG Sintético con Eventos Epileptogénicos
 
-# EEG_Sintetic_MorphoGenerator
+## Descripción
+Herramienta para generar señales electroencefalográficas (EEG) sintéticas, especialmente enfocada en morfologías (grafo elementos), eventos y actividad de fondo relacionados con la epilepsia.
 
-# Base de Datos de Señales EEG - DataBaseV1
+## Versión de Software y Compatibilidad
+El desarrollo y las pruebas del presente proyecto se llevaron a cabo utilizando las siguientes versiones de software:
 
-La base de datos `DataBaseV1` contiene una colección de señales EEG centradas en eventos con morfologías punta, lenta y punta-onda lenta. Esta base de datos está organizada en las carpetas `Spike_Waves`, `Slow_Waves` y`Spike_Slow_Waves`, donde se clasifican las señales según la naturaleza y la localización de los eventos EEG.
+- Python: Versión 3.9.13
+- Dash: Versión 2.11.1
+- Visual Studio Code: 1.86.2
 
-## Estructura de Carpetas
+Se recomienda verificar y utilizar las versiones mencionadas para asegurar compatibilidad y funcionamiento adecuado.
 
-Dentro de `Spike_Slow_Waves`, las señales están distribuidas en subcarpetas que representan diferentes tipos de eventos:
+## Instalación del Entorno y Dependencias
 
-- `Complex`: Contiene eventos complejos, caracterizados por agrupaciones o trenes de ondas de más de 4 segundos que son claramente identificables del fondo EEG. Esta categoría se divide a su vez en:
-    - `Middle`: Eventos complejos localizados en el medio de la señal.
-    - `Random`: Eventos complejos presentes de forma aleatoria en la señal.
-- `Transient`: Incluye eventos transitorios, que corresponden a ondas identificables de la señal de fondo de manera aislada.
+### Preparación del Entorno
+- **Editor de Código:** Se utiliza Visual Studio Code (VSCode) como editor de código fuente, aunque se puede seleccionar el de preferencia.
+- **Acceso al Código:** Abre la carpeta del proyecto en VSCode, asegurándose de incluir todos los archivos y subcarpetas.
 
-## Nomenclatura de los Archivos
+### Configuración del Entorno Python
+- Si no tiene Python instalado, descárguelo e instálelo desde el sitio web oficial [python.org](https://www.python.org/).
+- Asegúrate de agregar Python a las variables de entorno del sistema.
 
-Cada archivo en la base de datos sigue una nomenclatura específica que describe las características de la señal:
+### Instalación de Dependencias
+Ejecuta el siguiente comando para instalar las dependencias necesarias:
 
-- `Sp`: Spike Signal (Señal Punta).
-- `Sl`: Slow Signal (Señal Lenta).
-- `Clpx`: Complex Event (Evento Complejo).
-    - `Midd`: Complex Event Middle (Evento Complejo en Medio).
-    - `Rand`: Complex Event Random (Evento Complejo Aleatorio).
-- `Trnt`: Transient Event (Evento Transitorio).
-- `NE`: Noise EEG (Ruido del EEG).
-- `NW`: Noise Wave (Ruido de las Ondas).
-
-Esta nomenclatura permite una rápida identificación de las características principales de cada señal dentro de la base de datos.
-
-
-# Descargar Repositorio de GitHub en Formato ZIP
-
-Este documento proporciona una guía paso a paso para descargar un repositorio de GitHub en formato ZIP. También se incluye una explicación sobre cómo organizar los archivos una vez descargados.
-
-## Pasos para Descargar el Repositorio
-
-1. **Acceder al Repositorio**: 
-   - Navega hasta la página principal del repositorio en GitHub.
-
-2. **Descargar el Repositorio**:
-   - Haz clic en el botón **`Code`** ubicado en la parte superior derecha del listado de archivos.
-   - En el menú desplegable, selecciona **`Download ZIP`**.
-   - El archivo ZIP del repositorio se descargará automáticamente en tu computadora.
-
-![image](https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/ef25b438-9f3f-4824-bbc8-60b1a4a8838f)
-
-## Organizar los Archivos Descargados
-
-Una vez que hayas descargado y extraído los archivos del ZIP, es posible que quieras organizarlos. Aquí te explicamos cómo hacerlo en tu sistema operativo.
-
-1. **Abrir la Carpeta del Repositorio**:
-   - Dirígete a la carpeta donde has extraído los archivos.
-
-2. **Ordenar Archivos**:
-   - Haz clic derecho en un espacio vacío dentro de la carpeta.
-   - Selecciona **`Ordenar por`** y luego **`Tipo`**. Esto agrupará los archivos por su extensión, facilitando la búsqueda de tipos de archivos específicos.
-
-### Video Tutorial
-
-Para una mejor comprensión, aquí tienes un video tutorial que muestra el proceso: *(Inserta el enlace o incrusta el video aquí)*.
+```bash
+pip install dash matplotlib plotly numpy scipy pyedflib mne waitress kaleido -U
+```
 
 
-https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/d1005862-8e35-4b98-8d2e-7b9ad2ec461d
+## Ejecución de la Aplicación
 
+### Utilización del Servidor Waitress
 
+- Abre la terminal integrada en VSCode o cualquier terminal de tu elección.
+- Navega hasta la ubicación de la carpeta del proyecto y ejecuta el siguiente comando para iniciar la aplicación:
 
-Si tienes alguna duda o necesitas asistencia adicional, no dudes en preguntar. 
+```bash
+waitress-serve --call 'main:app'
+```
 
+### Acceso a la Aplicación
 
+- Una vez iniciada la aplicación, se mostrará en la terminal el puerto local utilizado (por ejemplo, http://0.0.0.0:8080).
+- Abre un navegador web y accede a la dirección indicada para visualizar la interfaz principal de la aplicación.
 
-
-
-
-
-
-
-
-
-<p align="center">
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
-</p>
+## Descripción del código
+Para obtener más detalles sobre la instalación, configuración y uso del software, consulta el archivo "Codigo_Fuente_JEVG" incluido en el proyecto.
