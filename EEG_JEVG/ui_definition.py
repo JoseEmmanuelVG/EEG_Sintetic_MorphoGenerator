@@ -1,5 +1,6 @@
 from dash import dcc
-import dash_html_components as html
+from dash import html
+
 
 def get_layout():
     return html.Div([
@@ -59,4 +60,11 @@ dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
 
     html.Label('Amplitud de EEG (µV)'),
     dcc.Slider(id='eeg-amplitude-slider', min=0, max=100, step=1, value=50),  # Cambiamos el rango para permitir valores entre 0 y 100
+   
+
+
+    html.Button('Guardar como EDF', id='save-button', n_clicks=0),
+        html.Div(id='save-message'),  # Este Div mostrará un mensaje cuando se haya guardado
+   
+   
     ])

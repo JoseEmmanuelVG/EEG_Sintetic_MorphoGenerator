@@ -1,6 +1,46 @@
 import numpy as np
 import random
 from scipy.signal import gaussian
+import datetime
+
+
+# edf
+import pyedflib
+
+def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
+    """
+    Save the given data to an EDF file.
+
+    Args:
+        data (list of arrays): EEG channel data.
+        sfreq (int): Sampling frequency.
+        channel_names (list of str): Names of EEG channels.
+        filename (str): Name of the EDF file to be created.
+    """
+    f = pyedflib.EdfWriter(filename, len(channel_names), file_type=pyedflib.FILETYPE_EDFPLUS)
+
+    header = {
+        'technician': 'Simulador de ondas epilépticas',
+        'recording_additional': '',
+        'patientname': 'Simulated',
+        'patient_additional': '',
+        'patientcode': '',
+        'equipment': 'Simulator',
+        'admincode': '',
+        'gender': '',  # 
+        'sex': '',  # 
+        'startdate': datetime.datetime.now(),
+        'birthdate': ''
+    }
+
+    f.setHeader(header)
+
+    for i, ch_name in enumerate(channel_names):
+        f.setSignalHeader(i, {'label': ch_name, 'dimension': 'uV', 'sample_rate': sfreq, 'physical_max': 1000, 'physical_min': -1000, 'digital_max': 32767, 'digital_min': -32768, 'transducer': 'Simulated EEG', 'prefilter': ''})
+
+    f.writeSamples(data)
+    f.close()
+
 
 # Funciones para generación de ondas
 def generate_spike(amplitude, duration, sfreq):
@@ -124,3 +164,4 @@ def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000,
     eeg_signal *= 100  # Adjust the amplitude scale to your desired range
 
     return eeg_signal
+
