@@ -71,7 +71,7 @@ def generacion_rapida_layout():
         dcc.Interval(id='interval-component', interval=1*1000, n_intervals=0),
         html.Div(id='image-check-state', style={'display': 'none'}, children="not_generated"),
         dcc.Graph(id='rapid-graph'),
-        html.Div(id='onda-output') # Placeholder for showing results
+        html.Div(id='onda-output') # Marcador de posición para mostrar resultados
     ])
 
 
@@ -173,6 +173,8 @@ html.Div(id='duration-div', children=[
     html.Label('Amplitude of the EEG junction signal (µV)'),
     dcc.Slider(id='eeg-amplitude-slider', min=0, max=100, step=1, value=25),  # Cambiamos el rango para permitir valores entre 0 y 100
 
+    dcc.Store(id='store-data'),
+    dcc.Store(id='graph-data-store', storage_type='memory'),
 
     # Botón para guardar el archivo EDF
         html.Button('Save Signal', id='save-button', n_clicks=0),
@@ -212,7 +214,5 @@ html.Div(id='duration-div', children=[
             target="_blank",
             className='btn'
         ),
-
-
 
     ])

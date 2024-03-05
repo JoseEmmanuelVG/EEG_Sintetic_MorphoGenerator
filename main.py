@@ -1,6 +1,5 @@
 import dash
 from ui_definition import get_layout
-from callbacks_and_logic import register_callbacks
 from callbacks_default_page import register_callbacks_fast
 from callbacks_detailed_page import register_callbacks_detailed  
 from waitress import serve

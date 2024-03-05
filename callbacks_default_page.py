@@ -60,15 +60,15 @@ def register_callbacks_fast(app):
             prop_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
         if prop_id == 'generate-button':
-            # If the trigger was the generate-button
+            # Si el disparador fue el botón generar
             return generate_rapid_data(n_clicks, num_ondas_range, num_canales, num_hojas, onda_type)
         elif prop_id == 'onda-selector':
-            # If the trigger was the onda-selector
-            return dash.no_update, display_selected_onda(onda_selector_value)  # The dash.no_update indicates no change to the output
+            # Si el disparador fue el onda-selector
+            return dash.no_update, display_selected_onda(onda_selector_value)  # El guión.no_update indica que no hay cambios en la salida
         else:
             raise PreventUpdate
 
-    def generate_eeg_signal(freq_bands, freq_weights, duration=10, sampling_freq=1000, noise_amplitude=5.0):
+    def generate_eeg_signal(freq_bands, freq_weights, duration=10, sampling_freq=1000, noise_amplitude=0.7):
         """
         Generar una señal de EEG basada en bandas de frecuencia.
         """
@@ -89,7 +89,7 @@ def register_callbacks_fast(app):
         raw = mne.io.RawArray(data, info)
 
         # Ajustar el escalado para EEG en Volts (por ejemplo, 200 microvoltios = 200e-6 Volts)
-        scalings = {'eeg': 400e-24}
+        scalings = {'eeg': 600e-1}
 
         # Crear la figura con el escalado ajustado
         fig_mne = raw.plot(n_channels=n_channels, scalings=scalings, show=False)
@@ -131,7 +131,7 @@ def register_callbacks_fast(app):
             spike_mode = "transitory" if sheet_num % 2 == 0 else "complex"
 
             for _ in range(num_canales):
-                eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=5.0)
+                eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=3.0)
 
                 if onda_type == "puntas":
                     # Aquí generamos la señal base
@@ -193,7 +193,7 @@ def register_callbacks_fast(app):
 
                 all_channels_data.append(eeg_data)
 
-            # Saving the EDF files directly in the 'assets' folder without subfolder
+            # Guardar los archivos EDF directamente en la carpeta 'assets' sin subcarpeta.
             output_filename = os.path.join('assets', f"sheet_{sheet_num}.edf")
             all_edf_files.append(output_filename)
 

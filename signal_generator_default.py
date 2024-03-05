@@ -36,7 +36,7 @@ def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
     f.setHeader(header)
 
     for i, ch_name in enumerate(channel_names):
-        f.setSignalHeader(i, {'label': ch_name, 'dimension': 'uV', 'sample_rate': sfreq, 'physical_max': 1000, 'physical_min': -1000, 'digital_max': 32767, 'digital_min': -32768, 'transducer': 'Simulated EEG', 'prefilter': ''})
+        f.setSignalHeader(i, {'label': ch_name, 'dimension': 'uV', 'sample_rate': sfreq, 'physical_max': 1000, 'physical_min': -1000, 'digital_max': 1000, 'digital_min': -1000, 'transducer': 'Simulated EEG', 'prefilter': ''})
 
     f.writeSamples(data)
     f.close()
@@ -52,7 +52,7 @@ def save_to_txt(data, channel_names, file_name="assets/output_file.txt"):
 
 
 
-# Functions for wave generation
+# Funciones para la generación de olas
 def generate_spike(amplitude, duration, sfreq):
     n_samples = int(duration * sfreq)
     spike = gaussian(n_samples, std=n_samples/7)
@@ -91,12 +91,12 @@ def generate_spikes_channel(n_spikes, times, sfreq, baseline, amplitude, duratio
 def generate_slow_wave(amplitude_wave, duration, sfreq):
     n_samples = int(duration * sfreq)
     t = np.arange(n_samples) / sfreq
-    slow_wave = np.sin(1.9 * np.pi * 1.9 * t)  # slow wave frequency set to 2 Hz (Delta wave)
+    slow_wave = np.sin(1.9 * np.pi * 1.9 * t)  # frecuencia de onda lenta ajustada a 2 Hz (onda Delta)
     print("Duration:", duration)
     print("sfreq:", sfreq)
     return amplitude_wave * slow_wave
 
-def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration in seconds
+def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration en segundos
     amplitude_spike_default = 100
     duration_spike_default = 0.05
     amplitude_wave_default = 60
@@ -131,27 +131,27 @@ def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration in se
         if current_start_index + n_duration_spike + n_duration_wave <= len(group_data):
             group_data[current_start_index:current_start_index + n_duration_spike] += spike
             group_data[current_start_index + n_duration_spike:current_start_index + n_duration_spike + n_duration_wave] += slow_wave
-            current_start_index += n_duration_spike + n_duration_wave  # Update start index for the next spike-wave pair
+            current_start_index += n_duration_spike + n_duration_wave  # Actualizar el índice de inicio para el siguiente par pico-onda
     return group_data
 
 
-# Define the EEG frequency bands
+# Definir las bandas de frecuencia del EEG
 delta_band = [0, 4]  # Delta rhythm: 0-4 Hz
 theta_band = [4, 8]  # Theta rhythm: 4-8 Hz
 alpha_band = [8, 12]  # Alpha rhythm: 8-12 Hz
 beta_band = [12, 30]  # Beta rhythm: 12-30 Hz
 gamma_band = [30, 70]  # Gamma rhythm: 30-70 Hz
 
-# Define the duration and sampling frequency of the EEG signal
+# Definir la duración y la frecuencia de muestreo de la señal EEG
 duration = 10  # seconds
 sampling_freq = 500  # Hz
 num_samples = duration * sampling_freq
 time = np.arange(0, duration, 1 / sampling_freq)
 
-# Create empty EEG signal
+# Crear señal EEG vacía
 eeg_signal = np.zeros(num_samples)
 
-# Generate each frequency band
+# Generar cada banda de frecuencia
 def generate_band(freq_range, amplitude, duration, sampling_freq):
     frequency = np.random.uniform(freq_range[0], freq_range[1])
     phase = np.random.uniform(0, 2 * np.pi)
@@ -165,28 +165,28 @@ eeg_signal += generate_band(delta_band, amplitude=20, duration=duration, samplin
 eeg_signal += generate_band(delta_band, amplitude=10, duration=duration, sampling_freq=sampling_freq)
 eeg_signal += generate_band(delta_band, amplitude=5, duration=duration, sampling_freq=sampling_freq)
 
-# Generate pink noise
+# Generar ruido rosa
 pink_noise = np.random.randn(num_samples)
 pink_noise = np.cumsum(pink_noise)
 pink_noise -= np.mean(pink_noise)
 pink_noise /= np.std(pink_noise)
 eeg_signal += pink_noise
 
-# Generate white noise
+# Generar ruido blanco
 white_noise = np.random.randn(num_samples)
 white_noise /= np.std(white_noise)
 eeg_signal += white_noise
 
-# Generate brown noise
+# Generar ruido marrón
 brown_noise = np.random.randn(num_samples)
 brown_noise = np.cumsum(brown_noise)
 brown_noise -= np.mean(brown_noise)
 brown_noise /= np.std(brown_noise)
 eeg_signal += brown_noise
 
-# Normalize the signal to the desired amplitude range
+# Normalizar la señal al rango de amplitud deseado
 eeg_signal /= np.max(np.abs(eeg_signal))
-eeg_signal *= 100  # Adjust the amplitude scale to your desired range
+eeg_signal *= 100  # Ajusta la escala de amplitud al rango deseado
 
 
 def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000, noise_amplitude=1.0):
@@ -206,21 +206,21 @@ def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000,
     num_samples = duration * sampling_freq
     time = np.arange(0, duration, 1 / sampling_freq)
 
-    # Create empty EEG signal
+    # Crear señal EEG vacía
     eeg_signal = np.zeros(num_samples)
 
     for band, amplitude in zip(freq_bands, amplitudes):
         eeg_signal += generate_band(band, amplitude, duration, sampling_freq)
 
-    # Generate pink noise
+    # Generar ruido rosa
     pink_noise = np.random.randn(num_samples) * noise_amplitude
     pink_noise = np.cumsum(pink_noise)
     pink_noise -= np.mean(pink_noise)
     pink_noise /= np.std(pink_noise)
     eeg_signal += pink_noise
 
-    # Normalize the signal to the desired amplitude range
+    # Normalizar la señal al rango de amplitud deseado
     eeg_signal /= np.max(np.abs(eeg_signal))
-    eeg_signal *= 100  # Adjust the amplitude scale to your desired range
+    eeg_signal *= 20  # Ajusta la escala de amplitud al rango deseado
 
     return eeg_signal
