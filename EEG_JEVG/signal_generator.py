@@ -42,11 +42,15 @@ def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
     f.close()
 
 
-# Funciones para generación de ondas
+# Functions for wave generation
 def generate_spike(amplitude, duration, sfreq):
     n_samples = int(duration * sfreq)
     spike = gaussian(n_samples, std=n_samples/7)
+    print("Duration:", duration)
+    print("sfreq:", sfreq)
     return amplitude * spike / np.max(spike)
+
+
 
 
 def generate_spikes_channel(n_spikes, times, sfreq, baseline, amplitude, duration, mode='transient', white_noise_amplitude=0, pink_noise_amplitude=0):
@@ -164,4 +168,56 @@ def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000,
     eeg_signal *= 100  # Adjust the amplitude scale to your desired range
 
     return eeg_signal
+
+
+
+
+
+
+
+def generate_slow_wave(amplitude_wave, duration, sfreq):
+    n_samples = int(duration * sfreq)
+    t = np.arange(n_samples) / sfreq
+    slow_wave = np.sin(1.9 * np.pi * 1.9 * t)  # slow wave frequency set to 2 Hz (Delta wave)
+    print("Duration:", duration)
+    print("sfreq:", sfreq)
+    return amplitude_wave * slow_wave
+
+def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration in seconds
+    amplitude_spike = random.uniform(0.5, 1.0) * amplitude_spike
+    duration_spike = random.uniform(0.02, 0.07) * duration_spike
+
+    amplitude_wave = random.uniform(0.5, 1.1) * amplitude_wave
+    duration_wave = random.uniform(0.22, 0.33) * duration_wave
+
+    n_samples = int(group_duration * sfreq)
+    group_data = np.zeros(n_samples)
+    n_spikes = random.randint(9, 12)  # 8-12 spikes
+    current_start_index = 0  # Start index for the first spike-wave pair
+    for _ in range(n_spikes):
+        amplitude_spike = random.uniform(0.5, 1.0) * 100
+        duration_spike = random.uniform(0.02, 0.07)
+        n_duration_spike = int(duration_spike * sfreq)
+        spike = generate_spike(amplitude_spike, duration_spike, sfreq)
+
+        if random.random() < 0.8:
+            amplitude_wave = random.uniform(0.5, amplitude_spike / 100) * 100
+        else:
+            amplitude_wave = random.uniform(0.5, 1.1) * 100
+
+        duration_wave = random.uniform(0.22, 0.33)
+        n_duration_wave = int(duration_wave * sfreq)
+        slow_wave = generate_slow_wave(amplitude_wave, duration_wave, sfreq)
+
+        if current_start_index + n_duration_spike + n_duration_wave <= len(group_data):
+            group_data[current_start_index:current_start_index + n_duration_spike] += spike
+            group_data[current_start_index + n_duration_spike:current_start_index + n_duration_spike + n_duration_wave] += slow_wave
+            current_start_index += n_duration_spike + n_duration_wave  # Update start index for the next spike-wave pair
+    return group_data
+
+
+
+
+
+
 
