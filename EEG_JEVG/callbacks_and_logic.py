@@ -5,7 +5,7 @@ matplotlib.use('Agg')
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
-from signal_generator import generate_spike, generate_spikes_channel, generate_eeg_signal, save_to_edf, generate_spike_wave_group
+from signal_generator import generate_spike, generate_spikes_channel, generate_eeg_signal, save_to_edf
 import numpy as np 
 import mne
 from plotly.subplots import make_subplots
@@ -49,8 +49,6 @@ def register_callbacks(app):
     def update_ui_based_on_wave(wave_selector):
         if wave_selector == "slow":
             return {'display': 'none'}, {}, {'display': 'none'}, {}
-        elif wave_selector == "mix-wave":
-            return {}, {}, {}, {}
         else:  # Asumimos que cualquier otro valor es un spike
             return {}, {'display': 'none'}, {}, {'display': 'none'}
 
@@ -86,8 +84,6 @@ def register_callbacks(app):
         if wave_selector == "slow":
             amplitude = amplitude_slow
             duration = duration_slow
-        elif wave_selector == "mix-wave":
-            generated_wave = generate_spike_wave_group(sfreq)
         else:  # Asumimos que cualquier otro valor es un spike
             amplitude = amplitude_spike
             duration = duration_spike
@@ -166,8 +162,6 @@ def register_callbacks(app):
         if wave_selector == "slow":
             amplitude = amplitude_slow
             duration = duration_slow
-        elif wave_selector == "mix-wave":
-            generated_wave = generate_spike_wave_group(sfreq)
         else:  # Asumimos que cualquier otro valor es un spike
             amplitude = amplitude_spike
             duration = duration_spike

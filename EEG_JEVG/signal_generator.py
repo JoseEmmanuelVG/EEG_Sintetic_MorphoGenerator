@@ -4,18 +4,273 @@ from scipy.signal import gaussian
 import datetime
 
 
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+
 # edf
 import pyedflib
 
-def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
+
+
+# Funciones para la generación de ondas
+# Asumiendo que la función gaussiana está definida o importada de scipy.stats
+from scipy.stats import norm
+
+
+def generate_spike(amplitude, duration, sfreq):
+    if isinstance(amplitude, (list, tuple)):
+        amplitude = random.uniform(*amplitude)
+    n_samples = int(duration * sfreq)
+    std_dev = n_samples / 5  # Ajustar para un pico más agudo
+    spike = gaussian(n_samples, std=std_dev)
+    return amplitude * spike / np.max(spike)
+
+
+def generate_slow_wave(amplitude_wave, duration, sfreq, frequency=1.0, cutoff_range=(-5, 2)):
     """
-    Save the given data to an EDF file.
+    Genera una onda lenta sinusoidal con una frecuencia específica que completa al menos medio ciclo y termina entre un rango de corte.
+    
+    Args:
+        amplitud_onda (float): La amplitud de la onda lenta.
+        duración (float): La duración en segundos sobre la que generar la onda.
+        sfreq (int): La frecuencia de muestreo en Hz.
+        frequency (float, opcional): La frecuencia de la onda lenta en Hz. Por defecto 1.0 Hz.
+        cutoff_range (tupla): El rango de amplitud dentro del cual puede terminar la onda lenta.
+    
+    Devuelve:
+        numpy.ndarray: La señal de onda lenta generada.
+    """
+    # Calcular el periodo de un ciclo
+    period = 1 / frequency
+    
+    # Calcular cuántas muestras por ciclo
+    samples_per_cycle = int(period * sfreq)
+    
+    # Garantizar que se genera al menos medio ciclo
+    samples_needed = max(samples_per_cycle // 2, int(duration * sfreq))
+    t = np.linspace(0, samples_needed / sfreq, samples_needed, endpoint=False)
+    
+    # Generar la onda completa
+    full_wave = amplitude_wave * np.sin(2 * np.pi * frequency * t)
+    
+    # Encuentra donde la onda cruza por primera vez el corte inferior después del pico.
+    peak_index = np.argmax(full_wave)
+    cross_lower = np.where((full_wave[peak_index:] <= cutoff_range[1]) & 
+                           (full_wave[peak_index:] >= cutoff_range[0]))[0]
+    
+    # Si no se encuentra ningún cruce, termina la onda en el último punto
+    if len(cross_lower) == 0:
+        cutoff_index = len(full_wave) - 1
+    else:
+        cutoff_index = peak_index + cross_lower[0]
+    
+    # Devuelve la onda hasta el corte
+    return full_wave[:cutoff_index+1]
+
+
+def generate_spike_slow_wave(sfreq, amplitude_spike_range, duration_spike_range, amplitude_slow_range, duration_slow_range):
+    """
+    Genera una secuencia combinada de picos y ondas lentas con los rangos de amplitud y duración especificados.
+    
+    Args:
+    sfreq (int): Frecuencia de muestreo.
+    amplitude_spike_range (tupla): Rango de amplitud de los picos.
+    duration_spike_range (tupla): Intervalo de duración de los picos en segundos.
+    amplitude_slow_range (tupla): Rango de amplitud de las ondas lentas.
+    duration_slow_range (tupla): Intervalo de duración de las ondas lentas en segundos.
+
+    Devuelve:
+    numpy.ndarray: Los datos generados del grupo de ondas pico-lentas.
+    """
+    # Generate the spike wave
+    amplitude_spike = random.uniform(*amplitude_spike_range)
+    duration_spike = random.uniform(*duration_spike_range)
+    spike_wave = generate_spike(amplitude_spike, duration_spike, sfreq)
+    
+    # Generar la onda lenta
+    amplitude_slow = random.uniform(*amplitude_slow_range)
+    duration_slow = random.uniform(*duration_slow_range)
+    slow_wave = generate_slow_wave(amplitude_slow, duration_slow, sfreq)
+    
+    # Combina el pico y la onda lenta
+    combined_wave = np.concatenate((spike_wave, slow_wave))
+    return combined_wave
+
+
+
+
+
+def generate_channel(n_waves, times, sfreq, baseline, amplitude_spike, duration_spike_range, amplitude_slow, duration_slow_range, wave_type='spike', mode='transient', white_noise_amplitude=0, pink_noise_amplitude=0, frequency=1.0):
+    channel_data = np.copy(baseline)
+    eeg_length = len(times)
+
+    # Define una función para generar el tipo de onda apropiado
+    def generate_wave(wave_type):
+        if wave_type == 'spike':
+            amplitude_val = random.uniform(*amplitude_spike)
+            duration_val = random.uniform(*duration_spike_range)
+            return generate_spike(amplitude_val, duration_val, sfreq)
+        elif wave_type == 'slow_wave':
+            amplitude_val = random.uniform(*amplitude_slow)
+            duration_val = random.uniform(*duration_slow_range)
+            return generate_slow_wave(amplitude_val, duration_val, sfreq, frequency)
+        elif wave_type == 'spike_slow_wave':
+            return generate_spike_slow_wave(sfreq, amplitude_spike, duration_spike_range, amplitude_slow, duration_slow_range)
+
+    if mode == 'complex':
+        # Define el intervalo centrado específico para la generación de ondas
+        central_start_time = np.random.uniform(2, 4)  # Inicio del intervalo central
+        central_end_time = np.random.uniform(6, 8)    # Fin del intervalo central
+        
+        # Convertir tiempos a índices
+        central_start_index = int(central_start_time * sfreq)
+        central_end_index = int(central_end_time * sfreq)
+        
+        # Ajusta el espacio disponible para la inserción de ondas
+        available_space = central_end_index - central_start_index
+    else:
+        available_space = eeg_length
+
+    last_end_index = central_start_index if mode == 'complex' else 0
+    for _ in range(n_waves):
+        wave = generate_wave(wave_type)
+        wave_length = len(wave)
+
+        # Para el modo complejo, ajusta el cálculo del índice de inicio
+        if mode == 'complex':
+            if last_end_index + wave_length > central_end_index:
+                break  # No hay espacio suficiente en el intervalo central
+            start_index = last_end_index
+        else:
+            if last_end_index + wave_length > eeg_length:
+                break  # No hay espacio suficiente
+            start_index = random.randint(last_end_index, eeg_length - wave_length)
+
+        channel_data[start_index:start_index + wave_length] += wave
+        last_end_index = start_index + wave_length
+        
+    # Añade ruido blanco y rosa a channel_data si es necesario
+    if white_noise_amplitude:
+        white_noise = white_noise_amplitude * np.random.randn(eeg_length)
+        channel_data += white_noise
+    if pink_noise_amplitude:
+        pink_noise = pink_noise_amplitude * np.cumsum(np.random.randn(eeg_length))
+        channel_data += pink_noise
+
+    return channel_data
+
+
+
+
+
+
+
+# Definir las bandas de frecuencia del EEG
+delta_band = [0, 4]  # Delta rhythm: 0-4 Hz
+theta_band = [4, 8]  # Theta rhythm: 4-8 Hz
+alpha_band = [8, 12]  # Alpha rhythm: 8-12 Hz
+beta_band = [12, 30]  # Beta rhythm: 12-30 Hz
+gamma_band = [30, 70]  # Gamma rhythm: 30-70 Hz
+
+# Definir la duración y la frecuencia de muestreo de la señal EEG
+duration = 10  # segundos
+sampling_freq = 500  # Hz
+num_samples = duration * sampling_freq
+time = np.arange(0, duration, 1 / sampling_freq)
+
+# Crear señal EEG vacía
+eeg_signal = np.zeros(num_samples)
+
+# Generar cada banda de frecuencia
+def generate_band(freq_range, amplitude, duration, sampling_freq):
+    frequency = np.random.uniform(freq_range[0], freq_range[1])
+    phase = np.random.uniform(0, 2 * np.pi)
+    time = np.arange(0, duration, 1 / sampling_freq)
+    return amplitude * np.sin(2 * np.pi * frequency * time + phase)
+
+
+eeg_signal += generate_band(gamma_band, amplitude=50, duration=duration, sampling_freq=sampling_freq)
+eeg_signal += generate_band(beta_band, amplitude=30, duration=duration, sampling_freq=sampling_freq)
+eeg_signal += generate_band(alpha_band, amplitude=20, duration=duration, sampling_freq=sampling_freq)
+eeg_signal += generate_band(theta_band, amplitude=10, duration=duration, sampling_freq=sampling_freq)
+eeg_signal += generate_band(delta_band, amplitude=5, duration=duration, sampling_freq=sampling_freq)
+
+# Generar ruido rosa
+pink_noise = np.random.randn(num_samples)
+pink_noise = np.cumsum(pink_noise)
+pink_noise -= np.mean(pink_noise)
+pink_noise /= np.std(pink_noise)
+eeg_signal += pink_noise
+
+# Generar ruido blanco
+white_noise = np.random.randn(num_samples)
+white_noise /= np.std(white_noise)
+eeg_signal += white_noise
+
+# Generar ruido marrón
+brown_noise = np.random.randn(num_samples)
+brown_noise = np.cumsum(brown_noise)
+brown_noise -= np.mean(brown_noise)
+brown_noise /= np.std(brown_noise)
+eeg_signal += brown_noise
+
+# Normalizar la señal al rango de amplitud deseado
+eeg_signal /= np.max(np.abs(eeg_signal))
+eeg_signal *= 100  # Ajustar la escala de amplitud al rango deseado
+
+
+def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000, noise_amplitude=1.0):
+    """
+    Genera una señal de EEG sintética basada en las bandas de frecuencia dadas.
 
     Args:
-        data (list of arrays): EEG channel data.
-        sfreq (int): Sampling frequency.
-        channel_names (list of str): Names of EEG channels.
-        filename (str): Name of the EDF file to be created.
+        freq_bands (list): Una lista de tuplas que definen las bandas de frecuencia.
+        amplitudes (list): Una lista de amplitudes para cada banda de frecuencia.
+        duration (int, optional): Duración de la señal en segundos. Por defecto es 10.
+        sampling_freq (int, optional): Frecuencia de muestreo en Hz. Por defecto es 1000.
+        noise_amplitude (float, optional): Amplitud del ruido aditivo. Por defecto es 1.0.
+
+    Returns:
+        numpy.ndarray: La señal de EEG sintética generada.
+    """
+    num_samples = duration * sampling_freq
+    time = np.arange(0, duration, 1 / sampling_freq)
+
+    # Crear señal EEG vacía
+    eeg_signal = np.zeros(num_samples)
+
+    for band, amplitude in zip(freq_bands, amplitudes):
+        eeg_signal += generate_band(band, amplitude, duration, sampling_freq)
+
+    # Generar ruido rosa
+    pink_noise = np.random.randn(num_samples) * noise_amplitude
+    pink_noise = np.cumsum(pink_noise)
+    pink_noise -= np.mean(pink_noise)
+    pink_noise /= np.std(pink_noise)
+    eeg_signal += pink_noise
+
+    # Normalizar la señal al rango de amplitud deseado
+    eeg_signal /= np.max(np.abs(eeg_signal))
+    eeg_signal *= 100  # Ajusta la escala de amplitud al rango deseado
+
+    return eeg_signal
+
+
+
+
+
+
+
+
+def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
+    """
+    Guarda los datos dados en un archivo EDF.
+
+    Args:
+        data (lista de matrices): Datos del canal de EEG.
+        sfreq (int): Frecuencia de muestreo.
+        channel_names (lista de cadenas): Nombres de los canales de EEG.
+        filename (str): Nombre del archivo EDF que se va a crear.
     """
     f = pyedflib.EdfWriter(filename, len(channel_names), file_type=pyedflib.FILETYPE_EDFPLUS)
 
@@ -41,183 +296,53 @@ def save_to_edf(data, sfreq, channel_names, filename='output.edf'):
     f.writeSamples(data)
     f.close()
 
+def save_to_txt(data, sfreq, file_name="output_file.txt"):
+    with open(file_name, "w") as f:
+        # Encabezado del archivo
+        f.write("Numero de datos\tFrecuencia de muestreo\tNumero de columnas\tInicial\tFinal\n")
 
-# Functions for wave generation
-def generate_spike(amplitude, duration, sfreq):
-    n_samples = int(duration * sfreq)
-    spike = gaussian(n_samples, std=n_samples/7)
-    print("Duration:", duration)
-    print("sfreq:", sfreq)
-    return amplitude * spike / np.max(spike)
+        # Información del archivo
+        num_datos = len(data[0])  # Asumiendo que todas las señales tienen la misma longitud
+        num_columnas = len(data)
+        f.write(f"{num_datos}\t{sfreq}\t{num_columnas}\t0\t{num_columnas - 1}\n")
 
-
-
-
-def generate_spikes_channel(n_spikes, times, sfreq, baseline, amplitude, duration, mode='transient', white_noise_amplitude=0, pink_noise_amplitude=0):
-    channel_data = np.copy(baseline)
-    prev_spike_end = 0
-    for _ in range(n_spikes):
-        amplitude_val = random.uniform(*amplitude)
-        duration_val = random.uniform(*duration)
-        spike = generate_spike(amplitude_val, duration_val, sfreq)
-        
-        if mode == 'transient':
-            start_index = random.randint(0, len(times) - len(spike) - 1)
-        elif mode == 'complex':
-            start_index = prev_spike_end
-            if start_index + len(spike) >= len(times):
-                break
-        else:
-            raise ValueError("Invalid mode. Use 'transient' or 'complex'.")
-        
-        channel_data[start_index:start_index + len(spike)] += spike
-        prev_spike_end = start_index + len(spike)
-        # Agregar ruido blanco y rosa
-    white_noise = white_noise_amplitude * np.random.randn(len(channel_data))
-    pink_noise = pink_noise_amplitude * np.cumsum(np.random.randn(len(channel_data)))
-    channel_data += white_noise + pink_noise
-
-    return channel_data
-
-# Define the EEG frequency bands
-delta_band = [0, 4]  # Delta rhythm: 0-4 Hz
-theta_band = [4, 8]  # Theta rhythm: 4-8 Hz
-alpha_band = [8, 12]  # Alpha rhythm: 8-12 Hz
-beta_band = [12, 30]  # Beta rhythm: 12-30 Hz
-gamma_band = [30, 70]  # Gamma rhythm: 30-70 Hz
-
-# Define the duration and sampling frequency of the EEG signal
-duration = 10  # seconds
-sampling_freq = 500  # Hz
-num_samples = duration * sampling_freq
-time = np.arange(0, duration, 1 / sampling_freq)
-
-# Create empty EEG signal
-eeg_signal = np.zeros(num_samples)
-
-# Generate each frequency band
-def generate_band(freq_range, amplitude, duration, sampling_freq):
-    frequency = np.random.uniform(freq_range[0], freq_range[1])
-    phase = np.random.uniform(0, 2 * np.pi)
-    time = np.arange(0, duration, 1 / sampling_freq)
-    return amplitude * np.sin(2 * np.pi * frequency * time + phase)
+        # Escribir los datos de cada canal en líneas separadas
+        for channel_data in data:
+            line = "\t".join(map(str, channel_data))
+            f.write(line + "\n")
 
 
-eeg_signal += generate_band(delta_band, amplitude=50, duration=duration, sampling_freq=sampling_freq)
-eeg_signal += generate_band(delta_band, amplitude=30, duration=duration, sampling_freq=sampling_freq)
-eeg_signal += generate_band(delta_band, amplitude=20, duration=duration, sampling_freq=sampling_freq)
-eeg_signal += generate_band(delta_band, amplitude=10, duration=duration, sampling_freq=sampling_freq)
-eeg_signal += generate_band(delta_band, amplitude=5, duration=duration, sampling_freq=sampling_freq)
-
-# Generate pink noise
-pink_noise = np.random.randn(num_samples)
-pink_noise = np.cumsum(pink_noise)
-pink_noise -= np.mean(pink_noise)
-pink_noise /= np.std(pink_noise)
-eeg_signal += pink_noise
-
-# Generate white noise
-white_noise = np.random.randn(num_samples)
-white_noise /= np.std(white_noise)
-eeg_signal += white_noise
-
-# Generate brown noise
-brown_noise = np.random.randn(num_samples)
-brown_noise = np.cumsum(brown_noise)
-brown_noise -= np.mean(brown_noise)
-brown_noise /= np.std(brown_noise)
-eeg_signal += brown_noise
-
-# Normalize the signal to the desired amplitude range
-eeg_signal /= np.max(np.abs(eeg_signal))
-eeg_signal *= 100  # Adjust the amplitude scale to your desired range
 
 
-def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000, noise_amplitude=1.0):
     """
-    Genera una señal de EEG sintética basada en las bandas de frecuencia dadas.
+# Función para plotear la señal generada
+def plot_spike_slow_wave(sfreq, amplitude_spike, duration_spike, amplitude_slow, duration_slow, group_duration):
+    # Generar la señal EEG con ruido para el fondo
+    eeg_signal = generate_eeg_signal([delta_band, theta_band, alpha_band, beta_band, gamma_band], [50, 30, 20, 10, 5], group_duration, sfreq)
+    
+    # Generar el grupo de ondas punta-lenta
+    spike_slow_group = generate_spike_wave_group(sfreq, amplitude_spike, duration_spike, amplitude_slow, duration_slow, eeg_signal, group_duration)
+    
+    # Crear un vector de tiempo para plotear
+    time_vector = np.linspace(0, group_duration, int(sfreq * group_duration))
+    
+    # Plotear la señal
+    plt.figure(figsize=(10, 4))
+    plt.plot(time_vector, spike_slow_group, label='Spike-Slow Wave Group')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Amplitude')
+    plt.title('Spike-Slow Wave Group Signal')
+    plt.legend()
+    plt.show()
 
-    Args:
-        freq_bands (list): Una lista de tuplas que definen las bandas de frecuencia.
-        amplitudes (list): Una lista de amplitudes para cada banda de frecuencia.
-        duration (int, optional): Duración de la señal en segundos. Por defecto es 10.
-        sampling_freq (int, optional): Frecuencia de muestreo en Hz. Por defecto es 1000.
-        noise_amplitude (float, optional): Amplitud del ruido aditivo. Por defecto es 1.0.
+# Parámetros de ejemplo
+sfreq = 500  # Frecuencia de muestreo
+amplitude_spike = (40, 60)  # Amplitud de las ondas puntas
+duration_spike = (0.02, 0.07)  # Duración de las ondas puntas
+amplitude_slow = (30, 60)  # Amplitud de las ondas lentas
+duration_slow = (0.2, 0.5)  # Duración de las ondas lentas
+group_duration = 3  # Duración total del grupo en segundos
 
-    Returns:
-        numpy.ndarray: La señal de EEG sintética generada.
+# Llamar a la función para plotear la señal
+plot_spike_slow_wave(sfreq, amplitude_spike, duration_spike, amplitude_slow, duration_slow, group_duration)
     """
-    num_samples = duration * sampling_freq
-    time = np.arange(0, duration, 1 / sampling_freq)
-
-    # Create empty EEG signal
-    eeg_signal = np.zeros(num_samples)
-
-    for band, amplitude in zip(freq_bands, amplitudes):
-        eeg_signal += generate_band(band, amplitude, duration, sampling_freq)
-
-    # Generate pink noise
-    pink_noise = np.random.randn(num_samples) * noise_amplitude
-    pink_noise = np.cumsum(pink_noise)
-    pink_noise -= np.mean(pink_noise)
-    pink_noise /= np.std(pink_noise)
-    eeg_signal += pink_noise
-
-    # Normalize the signal to the desired amplitude range
-    eeg_signal /= np.max(np.abs(eeg_signal))
-    eeg_signal *= 100  # Adjust the amplitude scale to your desired range
-
-    return eeg_signal
-
-
-
-
-
-
-
-def generate_slow_wave(amplitude_wave, duration, sfreq):
-    n_samples = int(duration * sfreq)
-    t = np.arange(n_samples) / sfreq
-    slow_wave = np.sin(1.9 * np.pi * 1.9 * t)  # slow wave frequency set to 2 Hz (Delta wave)
-    print("Duration:", duration)
-    print("sfreq:", sfreq)
-    return amplitude_wave * slow_wave
-
-def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration in seconds
-    amplitude_spike = random.uniform(0.5, 1.0) * amplitude_spike
-    duration_spike = random.uniform(0.02, 0.07) * duration_spike
-
-    amplitude_wave = random.uniform(0.5, 1.1) * amplitude_wave
-    duration_wave = random.uniform(0.22, 0.33) * duration_wave
-
-    n_samples = int(group_duration * sfreq)
-    group_data = np.zeros(n_samples)
-    n_spikes = random.randint(9, 12)  # 8-12 spikes
-    current_start_index = 0  # Start index for the first spike-wave pair
-    for _ in range(n_spikes):
-        amplitude_spike = random.uniform(0.5, 1.0) * 100
-        duration_spike = random.uniform(0.02, 0.07)
-        n_duration_spike = int(duration_spike * sfreq)
-        spike = generate_spike(amplitude_spike, duration_spike, sfreq)
-
-        if random.random() < 0.8:
-            amplitude_wave = random.uniform(0.5, amplitude_spike / 100) * 100
-        else:
-            amplitude_wave = random.uniform(0.5, 1.1) * 100
-
-        duration_wave = random.uniform(0.22, 0.33)
-        n_duration_wave = int(duration_wave * sfreq)
-        slow_wave = generate_slow_wave(amplitude_wave, duration_wave, sfreq)
-
-        if current_start_index + n_duration_spike + n_duration_wave <= len(group_data):
-            group_data[current_start_index:current_start_index + n_duration_spike] += spike
-            group_data[current_start_index + n_duration_spike:current_start_index + n_duration_spike + n_duration_wave] += slow_wave
-            current_start_index += n_duration_spike + n_duration_wave  # Update start index for the next spike-wave pair
-    return group_data
-
-
-
-
-
-
-
