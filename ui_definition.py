@@ -113,13 +113,17 @@ def generacion_detallada_layout():
 
 html.Div(id='amplitude-div', children=[
     html.Label('Amplitud (µV)'),
-    dcc.RangeSlider(id='amplitude-slider-spike', min=-10, max=100, step=2, value=[5, 50]),  
-    dcc.RangeSlider(id='amplitude-slider-slow', min=-10, max=125, step=5, value=[5, 50]),  
+    dcc.RangeSlider(id='amplitude-slider-spike', min=-10, max=100, step=5, value=[5, 50]),  
+    dcc.RangeSlider(id='amplitude-slider-slow', min=-10, max=100, step=5, value=[5, 50]),  
+    dcc.RangeSlider(id='amplitude-slider-spike-slow', min=-10, max=100, step=5, value=[5, 50]),  
+
 ]),
 html.Div(id='duration-div', children=[
     html.Label('Duration'),
-    dcc.RangeSlider(id='duration-slider-spike', min=0.01, max=0.1, step=0.01, value=[0.02, 0.07]),
-    dcc.RangeSlider(id='duration-slider-slow', min=0.1, max=0.3, step=0.02, value=[0.15,0.25 ]),
+    dcc.RangeSlider(id='duration-slider-spike', min=0.02, max=0.07, step=0.005, value=[0.02, 0.07]),
+    dcc.RangeSlider(id='duration-slider-slow', min=0.2, max=0.5, step=0.05, value=[0.2,0.5 ]),
+    dcc.RangeSlider(id='duration-slider-spike-slow', min=0.22, max=0.57, step=0.05, value=[0.22,0.57]),
+
 ]),
 
 
@@ -161,7 +165,7 @@ html.Div(id='duration-div', children=[
     dcc.RangeSlider(id='beta-band', min=12, max=30, step=0.5, value=[12, 30]),
 
     html.Label('Gamma Band'),
-    dcc.RangeSlider(id='gamma-band', min=30, max=70, step=0.1, value=[30, 70]),
+    dcc.RangeSlider(id='gamma-band', min=30, max=70, step=1, value=[30, 70]),
 
     html.Label('Noise amplitude'),
     dcc.Slider(id='noise-amplitude', min=0, max=2, step=0.1, value=1),

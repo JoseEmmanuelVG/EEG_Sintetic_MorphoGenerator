@@ -5,7 +5,7 @@ matplotlib.use('Agg')
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
-from signal_generator import generate_spike, generate_spikes_channel, generate_eeg_signal, save_to_edf, generate_spike_wave_group
+from signal_generator_default import generate_spike, generate_spikes_channel, generate_eeg_signal, save_to_edf, generate_spike_wave_group
 import numpy as np 
 import mne
 from plotly.subplots import make_subplots
@@ -15,7 +15,7 @@ from ui_definition import generacion_rapida_layout, generacion_detallada_layout,
 from dash import dcc
 from dash import html
 import os
-from signal_generator import delta_band
+from signal_generator_default import delta_band
 import plotly.io as pio
 import random
 
@@ -88,10 +88,17 @@ def register_callbacks_fast(app):
         info = mne.create_info(ch_names=[f'ch_{i}' for i in range(n_channels)], sfreq=sfreq, ch_types='eeg')
         raw = mne.io.RawArray(data, info)
 
-        # Modificar el argumento scalings aquí:
-        fig_mne = raw.plot(n_channels=n_channels, scalings={"eeg": 1e-1}, show=False)  # Modificado el valor de scalings
+        # Ajustar el escalado para EEG en Volts (por ejemplo, 200 microvoltios = 200e-6 Volts)
+        scalings = {'eeg': 400e-24}
+
+        # Crear la figura con el escalado ajustado
+        fig_mne = raw.plot(n_channels=n_channels, scalings=scalings, show=False)
         fig_mne.set_size_inches(10, 8)
-        fig_mne.savefig(output_filename, dpi=300)
+        fig_mne.savefig(output_filename, dpi=600)
+
+
+
+
     def save_to_txt(data, filename):
         np.savetxt(filename, data)
 
@@ -128,12 +135,12 @@ def register_callbacks_fast(app):
 
                 if onda_type == "puntas":
                     # Aquí generamos la señal base
-                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=5.0)
+                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=1.0)
                     
                     # Añadir spikes
                     num_spikes = random.randint(min_onda, max_onda)  # Numero de spikes entre min y max
-                    spike_amplitude_range = (20, 100)  # Definir el rango de amplitud para las puntas
-                    spike_duration_range = (0.1, 0.3)  # Duración de las puntas
+                    spike_amplitude_range = (40, 100)  # Definir el rango de amplitud para las puntas
+                    spike_duration_range = (0.02, 0.07)  # Duración de las puntas
 
                     for _ in range(num_spikes):
                         amplitude_val = random.uniform(*spike_amplitude_range)
@@ -148,12 +155,12 @@ def register_callbacks_fast(app):
                 
                 elif onda_type == "ondas_lentas":
                     # Aquí generamos la señal base
-                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=5.0)
+                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=1.0)
                     
                     # Añadir ondas lentas
                     num_slow_waves = random.randint(min_onda, max_onda)  # Número de ondas lentas entre min y max
-                    slow_wave_amplitude_range = (10, 50)  # Definir el rango de amplitud para las ondas lentas
-                    slow_wave_duration_range = (1, 3)  # Duración de las ondas lentas (generalmente entre 1 y 3 segundos)
+                    slow_wave_amplitude_range = (20, 60)  # Definir el rango de amplitud para las ondas lentas
+                    slow_wave_duration_range = (0.2, 0.5)  # Duración de las ondas lentas (generalmente entre 0.2 y 0.5 segundos)
 
                     for _ in range(num_slow_waves):
                         amplitude_val = random.uniform(*slow_wave_amplitude_range)
@@ -166,7 +173,7 @@ def register_callbacks_fast(app):
 
                 elif onda_type == "punta_onda_lenta":
                     # Aquí generamos la señal base
-                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=5.0)
+                    eeg_data = generate_eeg_signal([10], [30], duration=10, sampling_freq=1000, noise_amplitude=1.0)
 
                     # Añadir grupos de punta-onda lenta
                     num_groups = random.randint(min_onda, max_onda)  # Número de grupos entre min y max
@@ -244,7 +251,7 @@ def register_callbacks_fast(app):
         ]
         fig.update_layout(
             xaxis=dict(
-                tickvals=[2000, 4000, 6000, 8000, 10000],
+                tickvals=[2, 4, 6, 8, 1],
                 ticktext=['2s', '4s', '6s', '8s', '10s']
             )
         )

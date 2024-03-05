@@ -27,5 +27,5 @@ register_callbacks_fast(app)
 register_callbacks_detailed(app)
 
 from waitress import serve
-serve(app.server, host="0.0.0.0", port=6060)
+serve(app.server, host="0.0.0.0", port=8080)
 
