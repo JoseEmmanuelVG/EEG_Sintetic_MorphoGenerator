@@ -238,9 +238,9 @@ def register_callbacks_fast(app):
                 zipf.write(edf_file)
 
         download_links = [
-            html.A('Descargar Todas las Imágenes', id="download-images-btn", href='/assets/images.zip', download='images.zip', style={"display": "none"}),
-            html.A('Descargar Todos los EDFs', id="download-edfs-btn", href='/assets/edfs.zip', download='edfs.zip', style={"display": "none"}),
-            html.A('Descargar Todos los TXTs', id="download-txts-btn", href='/assets/txts.zip', download='txts.zip', style={"display": "block"}),
+            html.A('Download All Images', id="download-images-btn", href='/assets/images.zip', download='images.zip', style={"display": "none"}),
+            html.A('Download All EDFs', id="download-edfs-btn", href='/assets/edfs.zip', download='edfs.zip', style={"display": "none"}),
+            html.A('Download All TXTs', id="download-txts-btn", href='/assets/txts.zip', download='txts.zip', style={"display": "block"}),
         ]
         fig.update_layout(
             xaxis=dict(

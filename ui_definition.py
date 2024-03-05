@@ -28,8 +28,8 @@ def generacion_rapida_layout():
         html.H1('Default generation'),
         html.Br(),
         html.Hr(),
-        html.A('Volver al inicio', href='/'),  
-        html.Label('Número de Ondas:'),  
+        html.A('Back to Menu', href='/'),  
+        html.Label('Number of Waves:'),  
         dcc.RangeSlider(  # Modificado a RangeSlider para seleccionar un rango
             id='ondas-slider',
             min=0,
@@ -41,14 +41,14 @@ def generacion_rapida_layout():
             updatemode='drag',
         ),
         html.Br(),
-        html.Label('Número de Canales:'),  # Etiqueta para el input de canales
+        html.Label('Number of Channels:'),  # Etiqueta para el input de canales
         dcc.Input(  # Campo de texto para introducir el número de canales
             id='canales-input',
             type='number',  # Asegura que solo se puedan introducir números
             value=5,  # Valor inicial
         ),
         html.Br(),
-        html.Label('Número de Hojas (Numero par: Se genera señal compleja y transitoria):'),  # Etiqueta modificada para el input de hojas
+        html.Label('Number of Leaves (even number: complex and transient signal is generated):'),  # Etiqueta modificada para el input de hojas
         dcc.Input(
             id='hojas-input',
             type='number',
@@ -57,15 +57,15 @@ def generacion_rapida_layout():
             value=2,  # Valor inicial
         ),
         html.Br(),
-        html.Button('Generar', id='generate-button', n_clicks=0),
+        html.Button('Generate', id='generate-button', n_clicks=0),
     
     
     dcc.Dropdown(
             id='onda-selector',
             options=[
-                {'label': 'Puntas', 'value': 'puntas'},
-                {'label': 'Ondas Lentas', 'value': 'ondas_lentas'},
-                {'label': 'Punta-Onda Lenta', 'value': 'punta_onda_lenta'}
+                {'label': 'Spikes', 'value': 'puntas'},
+                {'label': 'Slow Waves', 'value': 'ondas_lentas'},
+                {'label': 'Spike-Slow Wave', 'value': 'punta_onda_lenta'}
             ],
         ),
         dcc.Interval(id='interval-component', interval=1*1000, n_intervals=0),
@@ -94,16 +94,16 @@ def generacion_detallada_layout():
         html.H1('Detailed Generation'),
         html.Br(),
         html.Hr(),
-        html.A('Volver al inicio', href='/'),
+        html.A('Back to Main', href='/'),
 
 
-        html.Label('Tipo de Onda:'),
+        html.Label('Wave Type:'),
         dcc.Dropdown(
             id='wave-selector',
             options=[
-                {'label': 'Ondas Punta', 'value': 'spike'},
-                {'label': 'Ondas Lentas', 'value': 'slow'},
-                {'label': 'Ondas Punta-Lenta', 'value': 'spike-slow'},
+                {'label': 'Spike Wave', 'value': 'spike'},
+                {'label': 'Slow Waves', 'value': 'slow'},
+                {'label': 'Spike-Slow Waves', 'value': 'spike-slow'},
             ],
             value='spike'  # Valor por defecto
         ),
@@ -117,61 +117,61 @@ html.Div(id='amplitude-div', children=[
     dcc.RangeSlider(id='amplitude-slider-slow', min=-10, max=125, step=5, value=[5, 50]),  
 ]),
 html.Div(id='duration-div', children=[
-    html.Label('Duración'),
+    html.Label('Duration'),
     dcc.RangeSlider(id='duration-slider-spike', min=0.01, max=0.1, step=0.01, value=[0.02, 0.07]),
     dcc.RangeSlider(id='duration-slider-slow', min=0.1, max=0.3, step=0.02, value=[0.15,0.25 ]),
 ]),
 
 
-    html.Label('Frecuencia de muestreo'),
+    html.Label('Sampling frequency'),
     dcc.Slider(id='sfreq-slider', min=100, max=1000, step=50, value=500),
 
-    html.Label('Número de Canales'),
+    #Ruido para las ondas   
+    html.Label('Peak Noise Amplitude (White and Pink)'),
+    dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
+
+    html.Label('Number of Channels'),
     dcc.Input(id='channels-input', type='number', min=1, value=1),
 
-    html.Label('Número de Ondas'),
+    html.Label('Number of Waves'),
     dcc.Input(id='spikes-input', type='number', min=1, value=10),
 
-    html.Label('Tiempo total (s)'),
+    html.Label('Total time (s)'),
     dcc.Input(id='time-input', type='number', min=1, value=10),
 
-    html.Label('Modo de generación de ondas pico'),
+    html.Label('Peak wave generation mode'),
     dcc.RadioItems(
     id='spike-mode',
     options=[
-        {'label': 'Transitorio', 'value': 'transient'},
-        {'label': 'Complejo', 'value': 'complex'}
+        {'label': 'Transitory', 'value': 'transient'},
+        {'label': 'Complex', 'value': 'complex'}
     ],
     value='transient'),
 
-#Ruido para las ondas
-html.Label('Amplitud de Ruido en Ondas Pico (Blanco y Rosa)'),
-dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
-
-    html.Label('Banda de Delta'),
+    html.Label('Delta Band'),
     dcc.RangeSlider(id='delta-band', min=0, max=4, step=0.1, value=[0, 4]),
 
-    html.Label('Banda de Theta'),
+    html.Label('Theta Band'),
     dcc.RangeSlider(id='theta-band', min=4, max=8, step=0.1, value=[4, 8]),
 
-    html.Label('Banda de Alpha'),
+    html.Label('Alpha Band'),
     dcc.RangeSlider(id='alpha-band', min=8, max=12, step=0.1, value=[8, 12]),
 
-    html.Label('Banda de Beta'),
+    html.Label('Beta Band'),
     dcc.RangeSlider(id='beta-band', min=12, max=30, step=0.5, value=[12, 30]),
 
-    html.Label('Banda de Gamma'),
+    html.Label('Gamma Band'),
     dcc.RangeSlider(id='gamma-band', min=30, max=70, step=0.1, value=[30, 70]),
 
-    html.Label('Amplitud del ruido'),
+    html.Label('Noise amplitude'),
     dcc.Slider(id='noise-amplitude', min=0, max=2, step=0.1, value=1),
 
-    html.Label('Amplitud de EEG (µV)'),
+    html.Label('Amplitude of the EEG junction signal (µV)'),
     dcc.Slider(id='eeg-amplitude-slider', min=0, max=100, step=1, value=25),  # Cambiamos el rango para permitir valores entre 0 y 100
 
 
     # Botón para guardar el archivo EDF
-        html.Button('Guardar como EDF', id='save-button', n_clicks=0),
+        html.Button('Save Signal', id='save-button', n_clicks=0),
         html.Div(id='save-message'),
    
         # Visor Edf
@@ -181,7 +181,7 @@ dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
         
         # Botón para descargar la imagen EEG
         html.A(
-            'Descargar Imagen EEG',
+            'Download EEG Image',
             id='download-image',
             download='EEG_plot.png',
             href='/assets/EEG_plot.png',
@@ -191,7 +191,7 @@ dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
         
         # Botón para descargar el archivo EDF
         html.A(
-            'Descargar Archivo EDF',
+            'Download EDF File',
             id='download-edf',
             download='output_file.edf',
             href='/assets/output_file.edf', # Asegúrate de tener 'assets/' antes de 'output_file.edf'
@@ -201,7 +201,7 @@ dcc.Slider(id='spike-noise-amplitude', min=0, max=2, step=0.1, value=0),
 
         # Botón para descargar el archivo TXT
         html.A(
-            'Descargar Archivo TXT',
+            'Download TXT File',
             id='download-txt',
             download='output_file.txt',
             href='/assets/output_file.txt',

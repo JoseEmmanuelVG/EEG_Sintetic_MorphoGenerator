@@ -74,9 +74,9 @@ def register_callbacks_detailed(app):
         if wave_selector == "slow":
             amplitude = amplitude_slow
             duration = duration_slow
-        elif wave_selector == "mix_wave":
-            combined_data = generate_spike_wave_group(sfreq, group_duration=3)            
-
+        elif wave_selector == "spike-slow":
+            combined_data = generate_spike_wave_group(sfreq, group_duration=3)
+            return {"data": [go.Scattergl(x=np.linspace(0, len(combined_data)/sfreq, len(combined_data)), y=combined_data, mode='lines')], "layout": go.Layout(title="EEG Signal")}
         else:  # Asumimos que cualquier otro valor es un spike
             amplitude = amplitude_spike
             duration = duration_spike

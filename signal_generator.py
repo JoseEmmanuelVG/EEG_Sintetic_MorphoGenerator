@@ -61,8 +61,6 @@ def generate_spike(amplitude, duration, sfreq):
     return amplitude * spike / np.max(spike)
 
 
-
-
 def generate_spikes_channel(n_spikes, times, sfreq, baseline, amplitude, duration, mode='transient', white_noise_amplitude=0, pink_noise_amplitude=0):
     channel_data = np.copy(baseline)
     prev_spike_end = 0
@@ -135,9 +133,6 @@ def generate_spike_wave_group(sfreq, group_duration = 3): # group_duration in se
             group_data[current_start_index + n_duration_spike:current_start_index + n_duration_spike + n_duration_wave] += slow_wave
             current_start_index += n_duration_spike + n_duration_wave  # Update start index for the next spike-wave pair
     return group_data
-
-
-
 
 
 # Define the EEG frequency bands
@@ -229,16 +224,3 @@ def generate_eeg_signal(freq_bands, amplitudes, duration=10, sampling_freq=1000,
     eeg_signal *= 100  # Adjust the amplitude scale to your desired range
 
     return eeg_signal
-
-
-
-
-
-
-
-
-
-
-
-
-
