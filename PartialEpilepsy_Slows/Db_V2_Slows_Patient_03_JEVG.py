@@ -37,7 +37,7 @@ gamma_band = [30, 70]  # Gamma rhythm: 30-70 Hz
 
 # Definir la duración y la frecuencia de muestreo de la señal EEG
 duration = 10  # seconds
-sampling_freq = 500  # Hz
+sampling_freq = 200  # Hz
 num_samples = duration * sampling_freq
 time = np.arange(0, duration, 1 / sampling_freq)
 
