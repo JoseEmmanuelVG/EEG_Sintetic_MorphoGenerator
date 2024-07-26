@@ -1,0 +1,33 @@
+import mne
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+
+# Crear una matriz de épocas con una espiga en cada canal
+sfreq = 1000  # Frecuencia de muestreo en Hz
+times = np.arange(0, 10, 1/sfreq)  # Vector de tiempo en segundos
+n_channels = 5  # Número de canales
+data = np.zeros((n_channels, len(times)))
+
+# Definir un tiempo aleatorio dentro del intervalo de 10 segundos donde comienzan las espigas
+spike_start_time = random.randint(0, 10) * sfreq  # Tiempo de inicio en muestras
+
+# Generar un número aleatorio de espigas entre 5 y 20
+n_spikes = random.randint(5, 20)
+
+for i in range(n_channels):  
+    for j in range(n_spikes):
+        spike_time = spike_start_time + j * 100  # 100 muestras (0.1s) entre cada espiga
+        if spike_time + 50 < len(times):  # Asegurarse de que la espiga no se extienda más allá del final de los datos
+            data[i, spike_time:spike_time+50] = 1.0  # Crear una espiga en el canal i
+
+# Crear un objeto RawArray de MNE con los datos EEG sintéticos
+ch_names = ['EEG {}'.format(i+1) for i in range(n_channels)]  # Crear nombres para los canales
+info = mne.create_info(ch_names=ch_names, sfreq=sfreq, ch_types=['eeg'] * n_channels)
+raw = mne.io.RawArray(data, info)
+
+# Plotear los datos EEG sintéticos
+raw.plot()
+
+# Mostrar la gráfica y bloquear la ejecución hasta que se cierre la ventana de la gráfica
+plt.show(block=True)
