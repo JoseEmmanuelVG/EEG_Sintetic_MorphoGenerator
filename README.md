@@ -1,6 +1,18 @@
 
 # EEG_Sintetic_MorphoGenerator
 
+
+### Notificación de Derechos de Autor 📜
+
+Nos complace informar que la obra **"GENERADOR DE EEG SINTÉTICO CON EVENTOS EPILEPTOGÉNICOS"** ha sido registrada y protegida bajo derechos de autor emitidos por el **Instituto Nacional del Derecho de Autor (INDAUTOR)**, con el número de registro **03-2024-090909202200-01**. Este registro garantiza la originalidad y protección de la obra bajo la legislación mexicana y se encuentra bajo la custodia de la Oficina de Abogado General del Instituto Politécnico Nacional (IPN).
+
+Para mayor transparencia, hemos anexado una copia del certificado en este repositorio para consulta. Puedes descargar el documento aquí:  
+[Generador de EGG.pdf](https://github.com/user-attachments/files/17582382/Generador.de.EGG.pdf)
+
+
+
+
+
 # Base de Datos de Señales EEG - DataBaseV1
 
 La base de datos `DataBaseV1` contiene una colección de señales EEG centradas en eventos con morfologías punta, lenta y punta-onda lenta. Esta base de datos está organizada en las carpetas `Spike_Waves`, `Slow_Waves` y`Spike_Slow_Waves`, donde se clasifican las señales según la naturaleza y la localización de los eventos EEG.
@@ -67,9 +79,6 @@ https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/d
 
 
 Si tienes alguna duda o necesitas asistencia adicional, no dudes en preguntar. 
-
-
-
 
 
 
