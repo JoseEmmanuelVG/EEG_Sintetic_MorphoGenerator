@@ -2,83 +2,82 @@
 # EEG_Sintetic_MorphoGenerator
 
 
-### Notificación de Derechos de Autor 📜
+### Copyright Notification 📜
 
-Nos complace informar que la obra **"GENERADOR DE EEG SINTÉTICO CON EVENTOS EPILEPTOGÉNICOS"** ha sido registrada y protegida bajo derechos de autor emitidos por el **Instituto Nacional del Derecho de Autor (INDAUTOR)**, con el número de registro **03-2024-090909202200-01**. Este registro garantiza la originalidad y protección de la obra bajo la legislación mexicana y se encuentra bajo la custodia de la Oficina de Abogado General del Instituto Politécnico Nacional (IPN).
+We are pleased to inform you that the work **"SYNTHETIC EEG GENERATOR WITH EPILEPTOGENIC EVENTS"** has been registered and is protected under copyright issued by the **Instituto Nacional del Derecho de Autor (INDAUTOR)**, with registration number **03-2024-090909202200-01**. This registration ensures the originality and protection of the work under Mexican law and is held in custody by the Office of the General Counsel of the Instituto Politécnico Nacional (IPN).
 
-Para mayor transparencia, hemos anexado una copia del certificado en este repositorio para consulta. Puedes descargar el documento aquí:  
-[Generador de EGG.pdf](https://github.com/user-attachments/files/17582382/Generador.de.EGG.pdf)
+For transparency, we have attached a copy of the certificate in this repository for review. You can download the document here:  
+[Generador de EEG.pdf](https://github.com/user-attachments/files/17582382/Generador.de.EGG.pdf)
 
+**Patent Center**  
+**DSETT-IPN**
 
+---
 
+# EEG Signal Database - DataBaseV1
 
+The `DataBaseV1` database contains a collection of EEG signals focused on spike, slow, and spike-wave morphologies. This database is organized into folders: `Spike_Waves`, `Slow_Waves`, and `Spike_Slow_Waves`, where signals are classified according to the nature and location of EEG events.
 
-# Base de Datos de Señales EEG - DataBaseV1
+## Folder Structure
 
-La base de datos `DataBaseV1` contiene una colección de señales EEG centradas en eventos con morfologías punta, lenta y punta-onda lenta. Esta base de datos está organizada en las carpetas `Spike_Waves`, `Slow_Waves` y`Spike_Slow_Waves`, donde se clasifican las señales según la naturaleza y la localización de los eventos EEG.
+Within `Spike_Slow_Waves`, signals are distributed in subfolders representing different types of events:
 
-## Estructura de Carpetas
+- `Complex`: Contains complex events characterized by clusters or trains of waves lasting over 4 seconds, clearly distinguishable from the EEG background. This category is further divided into:
+    - `Middle`: Complex events located in the middle of the signal.
+    - `Random`: Complex events appearing randomly in the signal.
+- `Transient`: Includes transient events, which correspond to identifiable waves isolated from the background signal.
 
-Dentro de `Spike_Slow_Waves`, las señales están distribuidas en subcarpetas que representan diferentes tipos de eventos:
+## File Naming Conventions
 
-- `Complex`: Contiene eventos complejos, caracterizados por agrupaciones o trenes de ondas de más de 4 segundos que son claramente identificables del fondo EEG. Esta categoría se divide a su vez en:
-    - `Middle`: Eventos complejos localizados en el medio de la señal.
-    - `Random`: Eventos complejos presentes de forma aleatoria en la señal.
-- `Transient`: Incluye eventos transitorios, que corresponden a ondas identificables de la señal de fondo de manera aislada.
+Each file in the database follows a specific naming convention that describes the characteristics of the signal:
 
-## Nomenclatura de los Archivos
+- `Sp`: Spike Signal.
+- `Sl`: Slow Signal.
+- `Clpx`: Complex Event.
+    - `Midd`: Complex Event Middle.
+    - `Rand`: Complex Event Random.
+- `Trnt`: Transient Event.
+- `NE`: Noise EEG.
+- `NW`: Noise Wave.
 
-Cada archivo en la base de datos sigue una nomenclatura específica que describe las características de la señal:
+This naming system allows for quick identification of each signal's main features within the database.
 
-- `Sp`: Spike Signal (Señal Punta).
-- `Sl`: Slow Signal (Señal Lenta).
-- `Clpx`: Complex Event (Evento Complejo).
-    - `Midd`: Complex Event Middle (Evento Complejo en Medio).
-    - `Rand`: Complex Event Random (Evento Complejo Aleatorio).
-- `Trnt`: Transient Event (Evento Transitorio).
-- `NE`: Noise EEG (Ruido del EEG).
-- `NW`: Noise Wave (Ruido de las Ondas).
+---
 
-Esta nomenclatura permite una rápida identificación de las características principales de cada señal dentro de la base de datos.
+# Downloading GitHub Repository as ZIP
 
+This document provides a step-by-step guide on downloading a GitHub repository in ZIP format and explains how to organize the files once downloaded.
 
-# Descargar Repositorio de GitHub en Formato ZIP
+## Steps to Download the Repository
 
-Este documento proporciona una guía paso a paso para descargar un repositorio de GitHub en formato ZIP. También se incluye una explicación sobre cómo organizar los archivos una vez descargados.
+1. **Access the Repository**: 
+   - Navigate to the repository's main page on GitHub.
 
-## Pasos para Descargar el Repositorio
-
-1. **Acceder al Repositorio**: 
-   - Navega hasta la página principal del repositorio en GitHub.
-
-2. **Descargar el Repositorio**:
-   - Haz clic en el botón **`Code`** ubicado en la parte superior derecha del listado de archivos.
-   - En el menú desplegable, selecciona **`Download ZIP`**.
-   - El archivo ZIP del repositorio se descargará automáticamente en tu computadora.
+2. **Download the Repository**:
+   - Click the **`Code`** button at the top right of the file list.
+   - In the dropdown menu, select **`Download ZIP`**.
+   - The ZIP file of the repository will automatically download to your computer.
 
 ![image](https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/ef25b438-9f3f-4824-bbc8-60b1a4a8838f)
 
-## Organizar los Archivos Descargados
+## Organizing Downloaded Files
 
-Una vez que hayas descargado y extraído los archivos del ZIP, es posible que quieras organizarlos. Aquí te explicamos cómo hacerlo en tu sistema operativo.
+Once you have downloaded and extracted the ZIP files, you may want to organize them. Here’s how to do it on your operating system.
 
-1. **Abrir la Carpeta del Repositorio**:
-   - Dirígete a la carpeta donde has extraído los archivos.
+1. **Open the Repository Folder**:
+   - Go to the folder where you extracted the files.
 
-2. **Ordenar Archivos**:
-   - Haz clic derecho en un espacio vacío dentro de la carpeta.
-   - Selecciona **`Ordenar por`** y luego **`Tipo`**. Esto agrupará los archivos por su extensión, facilitando la búsqueda de tipos de archivos específicos.
+2. **Sort Files**:
+   - Right-click in an empty space within the folder.
+   - Select **`Sort by`** and then **`Type`**. This will group the files by extension, making it easier to find specific file types.
 
 ### Video Tutorial
 
-Para una mejor comprensión, aquí tienes un video tutorial que muestra el proceso: *(Inserta el enlace o incrusta el video aquí)*.
-
+For a better understanding, here is a video tutorial that shows the process: *(Insert the link or embed the video here)*.
 
 https://github.com/JoseEmmanuelVG/EEG_Sintetic_MorphoGenerator/assets/89156254/d1005862-8e35-4b98-8d2e-7b9ad2ec461d
 
-
-
-Si tienes alguna duda o necesitas asistencia adicional, no dudes en preguntar. 
+If you have any questions or need additional assistance, feel free to ask.
 
 
 
