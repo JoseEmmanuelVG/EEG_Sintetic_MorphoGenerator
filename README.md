@@ -1,5 +1,5 @@
 
-# EEG_Sintetic_MorphoGenerator
+# Synthetic EEG Signal Generator of Morphologies Associated with Epileptogenic Events
 
 
 ### Copyright Notification 📜
@@ -13,6 +13,9 @@ For transparency, we have attached a copy of the certificate in this repository 
 **DSETT-IPN**
 
 ---
+#### You can read the first article about this project [here](https://www.rcs.cic.ipn.mx/2024_153_5/).
+---
+
 
 # EEG Signal Database - DataBaseV1
 
@@ -83,6 +86,18 @@ If you have any questions or need additional assistance, feel free to ask.
 
 
 
+
+
+
+
+<details>
+  <summary>🌟 Did you find any repository useful?</summary>
+  If any project has been helpful to you, consider giving it a ⭐ star in the repository and follow my GitHub account to stay tuned for future updates! 🚀
+
+  In addition, I am always open to suggestions, recommendations or collaborations. Feel free to [get in touch](https://www.linkedin.com/in/vazquez-galan-jose-emmanuel-664968221) if you have any questions or ideas for improving this project. I'm excited for your feedback and contributions.
+
+  Thank you for your interest and support! 😊
+</details>
 
 
 
