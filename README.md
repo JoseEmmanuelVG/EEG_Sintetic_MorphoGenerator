@@ -13,7 +13,7 @@ For transparency, we have attached a copy of the certificate in this repository 
 **DSETT-IPN**
 
 ---
-#### You can read the first article about this project [here](https://www.rcs.cic.ipn.mx/2024_153_5/).
+#### You can read the first article about this project [Research in Computing Science 153(5), 2024](https://www.rcs.cic.ipn.mx/2024_153_5/).
 ---
 
 
